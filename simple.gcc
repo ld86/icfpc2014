@@ -1,0 +1,92 @@
+init:
+	LDC 31337
+	LDC -1
+	LDC -1
+	CONS
+	CONS
+	LDF step
+	CONS
+	RTN
+
+mod:
+	LDF dup
+	AP 1
+	LD 0 0
+	DIV
+	LD 0 0
+	MUL
+	SUB
+	RTN
+
+dup:
+	LD 0 0
+	LD 0 0
+	RTN
+
+unpack_pair:
+	LD 0 0
+	CDR
+	LD 0 0
+	CAR
+	LDC 10000
+	MUL
+	ADD
+	RTN
+
+get_current_location:
+	LD 0 0
+	CDR
+	CAR
+	CDR
+	CAR
+	RTN
+
+update_state:
+	LDC 1103515245
+	MUL
+	LDC 12345
+	ADD
+
+	LDC 1299709
+	LDF mod
+	AP 1
+	JOIN
+
+nop:
+	JOIN
+
+step:
+	LD 0 0
+	CAR
+
+	LD 0 0
+	CDR
+	LDF unpack_pair
+	AP 1
+
+	LD 0 1
+	LDF get_current_location
+	AP 1
+
+	LDF unpack_pair
+	AP 1
+
+	CEQ
+
+	SEL update_state nop
+
+	LD 0 1
+	LDF get_current_location
+	AP 1
+	CONS
+
+	LDF dup
+	AP 1
+	CAR
+
+	LDC 4
+	LDF mod
+	AP 1
+
+	CONS
+	RTN
