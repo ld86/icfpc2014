@@ -1,11 +1,5 @@
 ## How to build
 
 ```bash
-$ ?
-```
-
-## How to test
-
-```bash
-$ ?
+$ python labels.py baseline_rng.gcc
 ```
