@@ -149,6 +149,19 @@ function display(m) {
       return Maze
   }
 
+  function addCherry(Maze) {
+      var added = false;
+      while (!added) {
+          for (var i = 0; i < Maze.length; ++i) {
+              if (!added && Maze[i] == '.' && Math.random() < 0.0001) {
+                  Maze = Maze.substr(0, i) + '%' + Maze.substr(i + 1);
+                  added = true;
+              }
+          }
+      }
+      return Maze
+  }
+
   function addGhost(Maze) {
       var added = false;
       while (!added) {
@@ -162,13 +175,30 @@ function display(m) {
       return Maze
   }
 
+  function addPowerpill(Maze) {
+      var added = false;
+      while (!added) {
+          for (var i = 0; i < Maze.length; ++i) {
+              if (!added && Maze[i] == '.' && Math.random() < 0.0001) {
+                  Maze = Maze.substr(0, i) + 'o' + Maze.substr(i + 1);
+                  added = true;
+              }
+          }
+      }
+      return Maze
+  }
+
   function genLab() {
       var mapX = $("#map_x").val()
       var mapY = $("#map_y").val()
       var Maze = display(maze(parseInt(mapX), parseInt(mapY)))
       Maze = addLambda(Maze)
+      Maze = addCherry(Maze)
       for (var i = 0; i < parseInt($("#ghostCount").val()); ++i) {
           Maze = addGhost(Maze)
+      }
+      for (var i = 0; i < parseInt($("#powerCount").val()); ++i) {
+          Maze = addPowerpill(Maze)
       }
       $("#map").html(Maze)
   }
@@ -349,11 +379,13 @@ hlt
             </div>
           </div>
         <div id="map_size">
-            <input id="map_x" value="10">
+            <input id="map_x" value="10" placeholder="x">
             </br>
-            <input id="map_y" value="10">
+            <input id="map_y" value="10" placeholder="y">
             </br>
-            <input id="ghostCount" value="4">
+            <input id="ghostCount" value="4" placeholder="ghosts">
+            </br>
+            <input id="powerCount" value="4" placeholder="power pills">
         </div>
         <div id="buttons">
           <button id="load" type="button"> Load </button>
