@@ -50,6 +50,7 @@ function maze(x,y) {
  
 function display(m) {
     var text= [];
+    var addedLambdaMan = false
     for (var j= 0; j<m.x*2+1; j++) {
         var line= [];
         if (0 == j%2) {
@@ -71,7 +72,15 @@ function display(m) {
                     if (k>0 && m.horiz[(j-1)/2][k/4-1]) {
                         line.push('.');
                     } else {
-                        line.push('#');
+                        if (k == 0 || k == m.y*4) {
+                            line.push('#');
+                        } else {
+                            if (Math.random() < 0.5) {
+                                line.push('#');
+                            } else {
+                                line.push('.');
+                            }
+                        }
                     }
                 } else {
                     if (1 == k%4) {
@@ -127,12 +136,40 @@ function display(m) {
     return o;
   }
 
+  function addLambda(Maze) {
+      var added = false;
+      while (!added) {
+          for (var i = 0; i < Maze.length; ++i) {
+              if (!added && Maze[i] == '.' && Math.random() < 0.01) {
+                  Maze = Maze.substr(0, i) + '\\' + Maze.substr(i + 1);
+                  added = true;
+              }
+          }
+      }
+      return Maze
+  }
 
+  function addGhost(Maze) {
+      var added = false;
+      while (!added) {
+          for (var i = 0; i < Maze.length; ++i) {
+              if (!added && Maze[i] == '.' && Math.random() < 0.01) {
+                  Maze = Maze.substr(0, i) + '=' + Maze.substr(i + 1);
+                  added = true;
+              }
+          }
+      }
+      return Maze
+  }
 
   function genLab() {
       var mapX = $("#map_x").val()
       var mapY = $("#map_y").val()
       var Maze = display(maze(parseInt(mapX), parseInt(mapY)))
+      Maze = addLambda(Maze)
+      for (var i = 0; i < parseInt($("#ghostCount").val()); ++i) {
+          Maze = addGhost(Maze)
+      }
       $("#map").html(Maze)
   }
 
@@ -315,6 +352,8 @@ hlt
             <input id="map_x" value="10">
             </br>
             <input id="map_y" value="10">
+            </br>
+            <input id="ghostCount" value="4">
         </div>
         <div id="buttons">
           <button id="load" type="button"> Load </button>
