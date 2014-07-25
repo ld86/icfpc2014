@@ -140,7 +140,7 @@ function display(m) {
       var added = false;
       while (!added) {
           for (var i = 0; i < Maze.length; ++i) {
-              if (!added && Maze[i] == '.' && Math.random() < 0.01) {
+              if (!added && Maze[i] == '.' && Math.random() < 0.0001) {
                   Maze = Maze.substr(0, i) + '\\' + Maze.substr(i + 1);
                   added = true;
               }
@@ -153,7 +153,7 @@ function display(m) {
       var added = false;
       while (!added) {
           for (var i = 0; i < Maze.length; ++i) {
-              if (!added && Maze[i] == '.' && Math.random() < 0.01) {
+              if (!added && Maze[i] == '.' && Math.random() < 0.0001) {
                   Maze = Maze.substr(0, i) + '=' + Maze.substr(i + 1);
                   added = true;
               }
