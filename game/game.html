@@ -211,6 +211,10 @@ function display(m) {
       $("#map").html(Maze)
   }
 
+var stats = [];
+var min = 0xFFFFFFFF;
+var max = 0;
+
 function crossStep() {
     stepProg(state)
     if (state.gameOver == true){
@@ -220,6 +224,29 @@ function crossStep() {
       updateState()
       updateBoard(false)
       updateStatus("Game Over: " + victor)
+
+
+      var score = $("#score").html();
+      stats.push(parseInt(score));
+      if (min > parseInt(score)) {
+          min = parseInt(score);
+      }
+
+      if (max < parseInt(score)) {
+          max = parseInt(score);
+      }
+
+      $("#all").html(stats.join(" "));
+      $("#max").html(max);
+      $("#min").html(min);
+      var avg = 0;
+      for (var i = 0; i < stats.length; i++) {
+          avg += stats[i];
+      }
+      $("#avg").html(avg/stats.length);
+
+
+      runCross()
     }
     else {
       updateState()
@@ -363,14 +390,73 @@ function runCross() {
           <h2> Input </h2>
           <div id="inputs">
             <textarea class="twrap" id="lambda" placeholder="Lambda-Man program">
-LDC  0
-LDF  4
-CONS
-RTN
-LDC  0
-LDC  1
-CONS
-RTN
+                LDC 31337
+                LDC -1
+                LDC -1
+                CONS
+                CONS
+                LDF 42
+                CONS
+                RTN
+                LDF 16
+                AP 1
+                LD 0 0
+                DIV
+                LD 0 0
+                MUL
+                SUB
+                RTN
+                LD 0 0
+                LD 0 0
+                RTN
+                LD 0 0
+                CDR
+                LD 0 0
+                CAR
+                LDC 10000
+                MUL
+                ADD
+                RTN
+                LD 0 0
+                CDR
+                CAR
+                CDR
+                CAR
+                RTN
+                LDC 1103515245
+                MUL
+                LDC 12345
+                ADD
+                LDC 1299709
+                LDF 8
+                AP 1
+                JOIN
+                JOIN
+                LD 0 0
+                CAR
+                LD 0 0
+                CDR
+                LDF 19
+                AP 1
+                LD 0 1
+                LDF 27
+                AP 1
+                LDF 19
+                AP 1
+                CEQ
+                SEL 33 41
+                LD 0 1
+                LDF 27
+                AP 1
+                CONS
+                LDF 16
+                AP 1
+                CAR
+                LDC 4
+                LDF 8
+                AP 1
+                CONS
+                RTN
 </textarea>
             <textarea class="twrap" id="map" placeholder="Map">
 #######################
@@ -430,6 +516,15 @@ hlt
             <input id="ghostCount" value="4" placeholder="ghosts">
             </br>
             <input id="powerCount" value="4" placeholder="power pills">
+        </div>
+        <div>
+            All <span id="all"> </span>
+            </br>
+            Max <span id="max"> </span>
+            </br>
+            Min <span id="min"> </span>
+            </br>
+            Avg <span id="avg"> </span>
         </div>
         <div id="buttons">
           <button id="load" type="button"> Load </button>
