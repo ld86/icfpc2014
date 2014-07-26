@@ -1,0 +1,206 @@
+main:
+	LD 0 0
+	CAR
+	CAR
+
+	LDF length_func
+	AP 1
+
+	LDC 1
+	SUB
+
+	LD 0 0
+	CAR
+
+	LDF length_func
+	AP 1
+
+	LDC 1
+	SUB
+
+	CONS
+
+	LDF step
+	CONS
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+length_func:
+	LDC 1
+
+length_loop:
+	LDC 1
+	ADD
+
+	LD 0 0
+	CDR
+	ATOM
+
+	LD 0 0
+	CDR
+	ST 0 0
+
+	TSEL length_ret length_loop
+
+length_ret:
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+dup:
+	LD 0 0
+	LD 0 0
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+swap:
+	LD 0 1
+	LD 0 0
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+get_nth_element_func:
+	LD 0 0
+	CAR
+
+	LD 0 1
+	LDC 0
+	CEQ
+
+	LD 0 1
+	LDC 1
+	SUB
+	ST 0 1
+
+	LD 0 0
+	CDR
+	ST 0 0
+
+	TSEL get_nth_element_ret get_nth_element_func
+
+get_nth_element_ret:
+	RTN
+
+get_cell_func:
+	LD 0 0
+
+	LD 0 1
+	CDR
+
+	LDF get_nth_element_func
+	AP 2
+
+	LD 0 1
+	CAR
+
+	LDF get_nth_element_func
+	AP 2
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+valid_cell:
+	LD 0 0
+	LD 0 1
+
+	LDF get_cell_func
+	AP 2
+
+	LDC 0
+	CGT
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+finish_cell:
+	LD 0 0
+	LD 0 1
+
+	LDF get_cell_func
+	AP 2
+
+	LDC 1
+	ADD
+	LDC 3
+	DIV
+	LDC 1
+	CEQ
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+is_visited_func:
+	LD 0 0
+	ATOM
+	TSEL is_visited_not_found is_visited_main_loop
+
+is_visited_main_loop:
+	LD 0 0
+	CAR
+	CAR
+	LD 0 1
+	CAR
+	CEQ
+
+	LD 0 0
+	CAR
+	CDR
+	LD 0 1
+	CDR
+	CEQ
+
+	MUL
+
+	LD 0 0
+	CDR
+	ST 0 0
+
+	TSEL is_visited_found is_visited_func
+
+is_visited_not_found:
+	LDC 0
+	RTN
+
+is_visited_found:
+	LDC 1
+	RNT
+
+;////////////////////////////////////////////////////////////////////////////////
+
+adjacent:
+	LD 0 0
+	CAR
+	LD 0 1
+	ADD
+	LD 0 0
+	CDR
+	LD 0 2
+	ADD
+	CONS
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+bfs:
+	
+
+;////////////////////////////////////////////////////////////////////////////////
+
+step:
+	LD 0 1
+	CAR
+	LDC 1
+	LDC 3
+	CONS
+	LDF get_cell_func
+	AP 2
+	DBUG
+
+	LDC 42
+	LDC 1
+	CONS
+
+	RTN

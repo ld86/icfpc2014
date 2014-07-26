@@ -12,15 +12,22 @@ function GCC () {
 }
 
 GCC.prototype.CallExpression = function (block) {
-    var func = this.scope.getFunction(block.callee.name);
-    this.traverse(block.arguments);
-    this.scope.code.push('LDF ' + func.label);
-    this.scope.code.push('AP ' + block.arguments.length);
+
+    if (block.callee.name === 'CONS') {
+        this.traverse(block.arguments);
+        this.scope.code.push('CONS');
+    } else {
+        var func = this.scope.getFunction(block.callee.name);
+        this.traverse(block.arguments);
+        this.scope.code.push('LDF ' + func.label);
+        this.scope.code.push('AP ' + block.arguments.length);
+    }
 };
 
 GCC.prototype.AssignmentExpression = function (block) {
     this.traverse(block.init || block.right);
-    var env = this.scope.getVariable(block.left.name);
+    var env = this.scope.getIdentifier((block.id || block.left).name);
+    if (!env) { throw new Error('Could not find ' + block.left.name); }
     this.scope.code.push('ST ' + env.depth + ' ' + env.idx);
 };
 
@@ -43,7 +50,7 @@ GCC.prototype.FunctionDeclaration = function (func) {
 
 GCC.prototype.ReturnStatement = function (ret) {
     this.traverse(ret.argument);
-    this.scope.code.push('RET');
+    this.scope.code.push('RTN');
 };
 
 GCC.prototype.Literal = function (block) {
@@ -58,10 +65,22 @@ GCC.prototype.BlockStatement = function (block) {
     this.traverse(block.body);
 };
 
+GCC.prototype.Identifier = function (block) {
+    var env = this.scope.getIdentifier(block.name);
+    if (env) {
+        return this.scope.code.push('LD ' + env.depth + ' ' + env.idx);
+    }
+    env = this.scope.getFunction(block.name);
+    if (env) {
+        return this.scope.code.push('LDF ' + env.label);
+    }
+    throw new Error('Could not find identifier ' + block.name);
+};
+
 GCC.prototype.BinaryExpression = function (block) {
     this.traverse(block.left);
     this.traverse(block.right);
-    this.scope.code.push(BinaryCommands[block.operator]);
+    this.scope.code = this.scope.code.concat(BinaryCommands[block.operator]);
 };
 
 GCC.prototype.EmptyStatement = function () {};
@@ -80,7 +99,7 @@ GCC.prototype.traverse = function (block) {
         this[block.type](block);
     } else {
         console.error(block);
-        console.error('Unknown block type: ' + block.type);
+        throw new Error('Unknown block type: ' + block.type);
     }
 };
 
