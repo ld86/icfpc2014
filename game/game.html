@@ -316,8 +316,8 @@ function crossLoop() {
       crossStep()
       setTimeout(crossLoop, 0.1)
     } else {
+        nowMaze += 1;
         if (nowMaze < mazes.length) {
-            nowMaze += 1;
             runCross()
         } else {
             nowMaze = 0;
