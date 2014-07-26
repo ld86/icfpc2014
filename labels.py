@@ -13,7 +13,7 @@ output = ""
 for line in lines:
 	if line.endswith(':'):
 		labels[line[:-1]] = l
-	else:
+	elif not line.startswith(';'):
 		output += line + '\n'
 		l += 1
 
