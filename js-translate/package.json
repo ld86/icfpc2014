@@ -16,6 +16,7 @@
     "should": "^4.0.4"
   },
   "dependencies": {
-    "esprima": "^1.2.2"
+    "esprima": "^1.2.2",
+    "lodash": "^2.4.1"
   }
 }

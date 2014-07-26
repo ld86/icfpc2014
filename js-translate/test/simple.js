@@ -8,7 +8,7 @@ describe('simple', function () {
 		t('1 + 2').should.eql(
 			'LDC 1\n' +
 			'LDC 2\n' +
-			'ADD\n'
+			'ADD'
 		);
 	});
 });
