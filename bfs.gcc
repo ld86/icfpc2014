@@ -410,7 +410,90 @@ bfs_return_dist:
 
 ;////////////////////////////////////////////////////////////////////////////////
 
+bfs_maybe_func:
+	LD 0 0
+	LD 0 1
+
+	LDF valid_cell
+	AP 2
+
+	LDC 1
+	CEQ
+	TSEL bfs_maybe_continue bfs_maybe_return
+
+bfs_maybe_continue:
+	LD 0 0
+
+	LD 0 1
+	LDC 0
+	CONS
+
+	LDC 1
+
+	LDF bfs_func
+	AP 3
+
+	LD 0 2
+	CONS
+
+	LDC 0
+	CONS
+
+	RTN
+
+bfs_maybe_return:
+	LDC 0
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+find_minimum_func:
+	LD 0 0
+	ATOM
+	TSEL find_minimum_ret find_minimum_continue
+
+find_minimum_continue:
+	LD 0 2
+
+	LD 0 0
+	CAR
+	CAR
+
+	CGT
+
+	TSEL find_minimum_update_dist find_minimum_continue2
+
+find_minimum_update_dist:
+	LD 0 0
+	CAR
+	CAR
+	ST 0 2
+
+	LD 0 0
+	CAR
+	CDR
+	ST 0 1
+
+find_minimum_continue2:
+	LD 0 0
+	CDR
+	ST 0 0
+
+	LDC 1
+	LDC 1
+	CEQ
+	TSEL find_minimum_func find_minimum_ret
+
+find_minimum_ret:
+	LD 0 1
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
 step:
+	LDC 0
+
+; dir0
 	LD 0 1
 	CAR
 	
@@ -419,18 +502,128 @@ step:
 	CAR
 	CDR
 	CAR
+	CAR
 
-	LDC 0
+	LD 0 1
+	CDR
+	CAR
+	CDR
+	CAR
+	CDR
+	LDC -1
+	ADD
+
 	CONS
 
 	LDC 0
 
-	LDF bfs_func
+	LDF bfs_maybe_func
 	AP 3
-	DBUG
+
+	LDF concat_func
+	AP 2
+
+;dir1
+	LD 0 1
+	CAR
+	
+	LD 0 1
+	CDR
+	CAR
+	CDR
+	CAR
+	CAR
+	LDC 1
+	ADD
+
+	LD 0 1
+	CDR
+	CAR
+	CDR
+	CAR
+	CDR
+
+	CONS
+
+	LDC 1
+
+	LDF bfs_maybe_func
+	AP 3
+
+	LDF concat_func
+	AP 2
+
+;dir2
+	LD 0 1
+	CAR
+	
+	LD 0 1
+	CDR
+	CAR
+	CDR
+	CAR
+	CAR
+
+	LD 0 1
+	CDR
+	CAR
+	CDR
+	CAR
+	CDR
+	LDC 1
+	ADD
+
+	CONS
+
+	LDC 2
+
+	LDF bfs_maybe_func
+	AP 3
+
+	LDF concat_func
+	AP 2
+
+;dir3
+	LD 0 1
+	CAR
+	
+	LD 0 1
+	CDR
+	CAR
+	CDR
+	CAR
+	CAR
+	LDC -1
+	ADD
+
+	LD 0 1
+	CDR
+	CAR
+	CDR
+	CAR
+	CDR
+
+	CONS
+
+	LDC 3
+
+	LDF bfs_maybe_func
+	AP 3
+
+	LDF concat_func
+	AP 2
+
+;final_answer
+	LDC 0
+	LDC 100500
+	LDF find_minimum_func
+	AP 3
 
 	LDC 42
-	LDC 1
+
+	LDF swap
+	AP 2
+
 	CONS
 
 	RTN
