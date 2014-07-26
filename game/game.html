@@ -59,13 +59,21 @@ function display(m) {
                     line.push('#');
                 } else {
                     if (1 == k%4) {
-                    if (j>0 && m.verti[j/2-1][Math.floor(k/4)]) {
-                        line.push('.');
-                    } else {
-                        line.push('#');
+                        if (j>0 && m.verti[j/2-1][Math.floor(k/4)]) {
+                            line.push('.');
+                        } else {
+                            if (j == 0 || j == m.x*2) {
+                                line.push('#');
+                            } else {
+                                if (Math.random() < 0.8) {
+                                    line.push('#');
+                                } else {
+                                    line.push('.');
+                                }
+                            }
+                        }
                     }
-                    }
-               }
+                }
         } else {
             for (var k=0; k<m.y*4+1; k++)
                 if (0 == k%4) {
@@ -75,7 +83,7 @@ function display(m) {
                         if (k == 0 || k == m.y*4) {
                             line.push('#');
                         } else {
-                            if (Math.random() < 0.5) {
+                            if (Math.random() < 0.8) {
                                 line.push('#');
                             } else {
                                 line.push('.');
@@ -203,6 +211,41 @@ function display(m) {
       $("#map").html(Maze)
   }
 
+function crossStep() {
+    stepProg(state)
+    if (state.gameOver == true){
+      breakRun()
+      victor = state.gameWin ? "You won" : "You lost"
+      $(".run").attr("disabled", "disabled") 
+      updateState()
+      updateBoard(false)
+      updateStatus("Game Over: " + victor)
+    }
+    else {
+      updateState()
+      updateBoard(false)
+    } 
+}
+
+function crossRun() {
+    broken = false
+    updateStatus("Game running")
+    crossLoop()
+}
+
+function crossLoop() {
+    if (! broken){
+      crossStep()
+      setTimeout(crossLoop, 1)
+    }
+}
+
+function runCross() {
+    genLab();
+    load();
+    crossRun();
+}
+
   function setupBoard(){
     var board = state.board
     var y = board.length * width
@@ -263,7 +306,7 @@ function display(m) {
   function runLoop(){
     if (! broken){
       runStep()
-      setTimeout(runLoop, 50)
+      setTimeout(runLoop, 1)
     }
   }
     
@@ -300,6 +343,7 @@ function display(m) {
     $("#step").click(step)
     $("#runAll").click(run)
     $("#genLab").click(genLab)
+    $("#runCross").click(runCross)
   })
 
   
@@ -390,6 +434,7 @@ hlt
         <div id="buttons">
           <button id="load" type="button"> Load </button>
           <button id="genLab" type="button"> GenLab </button>
+          <button id="runCross" type="button"> Cross </button>
           <button class = "run" id="step" type="button"> Step </button>
           <button class = "run"id="runAll" type="button"> Run  </button>
         </div>
