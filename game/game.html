@@ -244,9 +244,6 @@ function crossStep() {
           avg += stats[i];
       }
       $("#avg").html(avg/stats.length);
-
-
-      runCross()
     }
     else {
       updateState()
@@ -263,7 +260,9 @@ function crossRun() {
 function crossLoop() {
     if (! broken){
       crossStep()
-      setTimeout(crossLoop, 1)
+      setTimeout(crossLoop, 0.1)
+    } else {
+        runCross()
     }
 }
 
