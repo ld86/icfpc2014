@@ -63,9 +63,6 @@ swap:
 ;////////////////////////////////////////////////////////////////////////////////
 
 get_nth_element_func:
-	LD 0 0
-	CAR
-
 	LD 0 1
 	LDC 0
 	CEQ
@@ -75,13 +72,21 @@ get_nth_element_func:
 	SUB
 	ST 0 1
 
+	TSEL get_nth_element_ret get_nth_element_continue
+
+get_nth_element_continue:
 	LD 0 0
 	CDR
 	ST 0 0
 
-	TSEL get_nth_element_ret get_nth_element_func
+	LDC 1
+	LDC 1
+	CEQ
+	TSEL get_nth_element_func get_nth_element_ret
 
 get_nth_element_ret:
+	LD 0 0
+	CAR
 	RTN
 
 get_cell_func:
@@ -98,6 +103,7 @@ get_cell_func:
 
 	LDF get_nth_element_func
 	AP 2
+
 	RTN
 
 ;////////////////////////////////////////////////////////////////////////////////
@@ -111,6 +117,7 @@ valid_cell:
 
 	LDC 0
 	CGT
+
 	RTN
 
 ;////////////////////////////////////////////////////////////////////////////////
@@ -122,10 +129,9 @@ finish_cell:
 	LDF get_cell_func
 	AP 2
 
-	LDC 1
-	ADD
-	LDC 3
+	LDC 2
 	DIV
+
 	LDC 1
 	CEQ
 	RTN
@@ -161,42 +167,266 @@ is_visited_main_loop:
 	TSEL is_visited_found is_visited_func
 
 is_visited_not_found:
-	LDC 0
+	LDC 1
 	RTN
 
 is_visited_found:
-	LDC 1
-	RNT
-
-;////////////////////////////////////////////////////////////////////////////////
-
-adjacent:
-	LD 0 0
-	CAR
-	LD 0 1
-	ADD
-	LD 0 0
-	CDR
-	LD 0 2
-	ADD
-	CONS
+	LDC 0
 	RTN
 
 ;////////////////////////////////////////////////////////////////////////////////
 
-bfs:
-	
+adjacent_func:
+	LD 0 0
+
+	LD 0 2
+	CAR
+	LD 0 3
+	ADD
+	LD 0 2
+	CDR
+	LD 0 4
+	ADD
+	CONS
+
+	LDF valid_cell
+	AP 2
+
+	LD 0 1
+
+	LD 0 2
+	CAR
+	LD 0 3
+	ADD
+	LD 0 2
+	CDR
+	LD 0 4
+	ADD
+	CONS
+
+	LDF is_visited_func
+	AP 2
+
+	MUL
+
+	LDC 1
+	CEQ
+
+	TSEL adjacent_add adjacent_rtn
+
+adjacent_add:
+	LD 0 2
+	CAR
+	LD 0 3
+	ADD
+	LD 0 2
+	CDR
+	LD 0 4
+	ADD
+	CONS
+
+	LDC 0
+	CONS
+
+	RTN
+
+adjacent_rtn:
+	LDC 0
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+concat_func:
+	LD 0 1
+	ATOM
+	TSEL concat_rtn concat_continue
+
+concat_continue:
+	LD 0 1
+	CAR
+	LD 0 0
+	CONS
+	ST 0 0
+
+	LD 0 1
+	CDR
+	ST 0 1
+
+	LDC 1
+	LDC 1
+	CEQ
+	TSEL concat_func concat_rtn
+
+concat_rtn:
+	LD 0 0
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+update_visited_func:
+	LD 0 1
+
+update_visited_loop:
+	LD 0 0
+	LD 0 2
+	LD 0 1
+	CAR
+	LDC 0
+	LDC -1
+
+	LDF adjacent_func
+	AP 5
+
+	LDF concat_func
+	AP 2
+
+	LD 0 0
+	LD 0 2
+	LD 0 1
+	CAR
+	LDC 1 
+	LDC 0
+	LDF adjacent_func
+	AP 5
+
+	LDF concat_func
+	AP 2
+
+	LD 0 0
+	LD 0 2
+	LD 0 1
+	CAR
+	LDC 0
+	LDC 1
+	LDF adjacent_func
+	AP 5
+
+	LDF concat_func
+	AP 2
+
+	LD 0 0
+	LD 0 2
+	LD 0 1
+	CAR
+	LDC -1
+	LDC 0
+	LDF adjacent_func
+	AP 5
+
+	LDF concat_func
+	AP 2
+
+	LD 0 1
+	CDR
+	ST 0 1
+
+	LD 0 1
+	ATOM
+
+	TSEL update_visited_rtn update_visited_continue
+
+update_visited_continue:
+	LDC 1
+	LDC 1
+	CEQ
+	TSEL update_visited_loop update_visited_rtn
+
+update_visited_rtn:
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+check_finished_func:
+	LD 0 1
+	ATOM
+	TSEL check_finished_fail check_finished_continue
+
+check_finished_continue:
+	LD 0 0
+
+	LD 0 1
+	CAR
+
+	LDF finish_cell
+	AP 2
+
+	LD 0 1
+	CDR
+	ST 0 1
+
+	LDC 1
+	CEQ
+	TSEL check_finished_ok check_finished_func
+
+check_finished_ok:
+	LDC 1
+	RTN
+
+check_finished_fail:
+	LDC 0
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+bfs_func:
+	LD 0 0
+	LD 0 1
+	LDF check_finished_func
+	AP 2
+
+	LDC 1
+	CEQ
+	TSEL bfs_return_dist bfs_continue
+
+bfs_continue:
+	LD 0 2
+	LDC 100
+	CGT
+
+	TSEL bfs_return_dist bfs_continue2
+
+bfs_continue2:
+	LD 0 0
+	LD 0 1
+	LD 0 1
+	LDF update_visited_func
+	AP 3
+
+	ST 0 1
+
+	LD 0 2
+	LDC 1
+	ADD
+	ST 0 2
+
+	LDC 1
+	LDC 1
+	CEQ
+	TSEL bfs_func bfs_return_dist
+
+bfs_return_dist:
+	LD 0 2
+	RTN
 
 ;////////////////////////////////////////////////////////////////////////////////
 
 step:
 	LD 0 1
 	CAR
-	LDC 1
-	LDC 3
+	
+	LD 0 1
+	CDR
+	CAR
+	CDR
+	CAR
+
+	LDC 0
 	CONS
-	LDF get_cell_func
-	AP 2
+
+	LDC 0
+
+	LDF bfs_func
+	AP 3
 	DBUG
 
 	LDC 42
