@@ -389,73 +389,411 @@ function runCross() {
           <h2> Input </h2>
           <div id="inputs">
             <textarea class="twrap" id="lambda" placeholder="Lambda-Man program">
-                LDC 31337
-                LDC -1
-                LDC -1
-                CONS
-                CONS
-                LDF 42
-                CONS
-                RTN
-                LDF 16
-                AP 1
                 LD 0 0
-                DIV
-                LD 0 0
-                MUL
-                SUB
-                RTN
-                LD 0 0
-                LD 0 0
-                RTN
-                LD 0 0
-                CDR
-                LD 0 0
-                CAR
-                LDC 10000
-                MUL
-                ADD
-                RTN
-                LD 0 0
-                CDR
-                CAR
-                CDR
-                CAR
-                RTN
-                LDC 1103515245
-                MUL
-                LDC 12345
-                ADD
-                LDC 1299709
-                LDF 8
-                AP 1
-                JOIN
-                JOIN
-                LD 0 0
-                CAR
-                LD 0 0
-                CDR
-                LDF 19
-                AP 1
-                LD 0 1
-                LDF 27
-                AP 1
-                LDF 19
-                AP 1
-                CEQ
-                SEL 33 41
-                LD 0 1
-                LDF 27
-                AP 1
-                CONS
-                LDF 16
-                AP 1
-                CAR
-                LDC 4
-                LDF 8
-                AP 1
-                CONS
-                RTN
+CAR
+CAR
+LDF 17
+AP 1
+LDC 1
+SUB
+LD 0 0
+CAR
+LDF 17
+AP 1
+LDC 1
+SUB
+CONS
+LDF 305
+CONS
+RTN
+LDC 1
+LDC 1
+ADD
+LD 0 0
+CDR
+ATOM
+LD 0 0
+CDR
+ST 0 0
+TSEL 27 18
+RTN
+LD 0 0
+LD 0 0
+RTN
+LD 0 1
+LD 0 0
+RTN
+LD 0 1
+LDC 0
+CEQ
+LD 0 1
+LDC 1
+SUB
+ST 0 1
+TSEL 49 42
+LD 0 0
+CDR
+ST 0 0
+LDC 1
+LDC 1
+CEQ
+TSEL 34 49
+LD 0 0
+CAR
+RTN
+LD 0 0
+LD 0 1
+CDR
+LDF 34
+AP 2
+LD 0 1
+CAR
+LDF 34
+AP 2
+RTN
+LD 0 0
+LD 0 1
+LDF 52
+AP 2
+LDC 0
+CGT
+RTN
+LD 0 0
+LD 0 1
+LDF 52
+AP 2
+LDC 2
+DIV
+LDC 1
+CEQ
+RTN
+LD 0 0
+ATOM
+TSEL 98 81
+LD 0 0
+CAR
+CAR
+LD 0 1
+CAR
+CEQ
+LD 0 0
+CAR
+CDR
+LD 0 1
+CDR
+CEQ
+MUL
+LD 0 0
+CDR
+ST 0 0
+TSEL 100 78
+LDC 1
+RTN
+LDC 0
+RTN
+LD 0 0
+LD 0 2
+CAR
+LD 0 3
+ADD
+LD 0 2
+CDR
+LD 0 4
+ADD
+CONS
+LDF 62
+AP 2
+LD 0 1
+LD 0 2
+CAR
+LD 0 3
+ADD
+LD 0 2
+CDR
+LD 0 4
+ADD
+CONS
+LDF 78
+AP 2
+MUL
+LDC 1
+CEQ
+TSEL 130 142
+LD 0 2
+CAR
+LD 0 3
+ADD
+LD 0 2
+CDR
+LD 0 4
+ADD
+CONS
+LDC 0
+CONS
+RTN
+LDC 0
+RTN
+LD 0 1
+ATOM
+TSEL 159 147
+LD 0 1
+CAR
+LD 0 0
+CONS
+ST 0 0
+LD 0 1
+CDR
+ST 0 1
+LDC 1
+LDC 1
+CEQ
+TSEL 144 159
+LD 0 0
+RTN
+LD 0 1
+LD 0 0
+LD 0 2
+LD 0 1
+CAR
+LDC 0
+LDC -1
+LDF 102
+AP 5
+LDF 144
+AP 2
+LD 0 0
+LD 0 2
+LD 0 1
+CAR
+LDC 1
+LDC 0
+LDF 102
+AP 5
+LDF 144
+AP 2
+LD 0 0
+LD 0 2
+LD 0 1
+CAR
+LDC 0
+LDC 1
+LDF 102
+AP 5
+LDF 144
+AP 2
+LD 0 0
+LD 0 2
+LD 0 1
+CAR
+LDC -1
+LDC 0
+LDF 102
+AP 5
+LDF 144
+AP 2
+LD 0 1
+CDR
+ST 0 1
+LD 0 1
+ATOM
+TSEL 212 208
+LDC 1
+LDC 1
+CEQ
+TSEL 162 212
+RTN
+LD 0 1
+ATOM
+TSEL 229 216
+LD 0 0
+LD 0 1
+CAR
+LDF 69
+AP 2
+LD 0 1
+CDR
+ST 0 1
+LDC 1
+CEQ
+TSEL 227 213
+LDC 1
+RTN
+LDC 0
+RTN
+LD 0 0
+LD 0 1
+LDF 213
+AP 2
+LDC 1
+CEQ
+TSEL 256 238
+LD 0 2
+LDC 100
+CGT
+TSEL 256 242
+LD 0 0
+LD 0 1
+LD 0 1
+LDF 161
+AP 3
+ST 0 1
+LD 0 2
+LDC 1
+ADD
+ST 0 2
+LDC 1
+LDC 1
+CEQ
+TSEL 231 256
+LD 0 2
+RTN
+LD 0 0
+LD 0 1
+LDF 62
+AP 2
+LDC 1
+CEQ
+TSEL 265 277
+LD 0 0
+LD 0 1
+LDC 0
+CONS
+LDC 1
+LDF 231
+AP 3
+LD 0 2
+CONS
+LDC 0
+CONS
+RTN
+LDC 0
+RTN
+LD 0 0
+ATOM
+TSEL 303 282
+LD 0 2
+LD 0 0
+CAR
+CAR
+CGT
+TSEL 288 296
+LD 0 0
+CAR
+CAR
+ST 0 2
+LD 0 0
+CAR
+CDR
+ST 0 1
+LD 0 0
+CDR
+ST 0 0
+LDC 1
+LDC 1
+CEQ
+TSEL 279 303
+LD 0 1
+RTN
+LDC 0
+LD 0 1
+CAR
+LD 0 1
+CDR
+CAR
+CDR
+CAR
+CAR
+LD 0 1
+CDR
+CAR
+CDR
+CAR
+CDR
+LDC -1
+ADD
+CONS
+LDC 0
+LDF 258
+AP 3
+LDF 144
+AP 2
+LD 0 1
+CAR
+LD 0 1
+CDR
+CAR
+CDR
+CAR
+CAR
+LDC 1
+ADD
+LD 0 1
+CDR
+CAR
+CDR
+CAR
+CDR
+CONS
+LDC 1
+LDF 258
+AP 3
+LDF 144
+AP 2
+LD 0 1
+CAR
+LD 0 1
+CDR
+CAR
+CDR
+CAR
+CAR
+LD 0 1
+CDR
+CAR
+CDR
+CAR
+CDR
+LDC 1
+ADD
+CONS
+LDC 2
+LDF 258
+AP 3
+LDF 144
+AP 2
+LD 0 1
+CAR
+LD 0 1
+CDR
+CAR
+CDR
+CAR
+CAR
+LDC -1
+ADD
+LD 0 1
+CDR
+CAR
+CDR
+CAR
+CDR
+CONS
+LDC 3
+LDF 258
+AP 3
+LDF 144
+AP 2
+LDC 0
+LDC 100500
+LDF 279
+AP 3
+LDC 42
+LDF 31
+AP 2
+CONS
+RTN
+
+
 </textarea>
             <textarea class="twrap" id="map" placeholder="Map">
 #######################
