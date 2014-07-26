@@ -1,4 +1,4 @@
-main:
+init:
 	LDC 31337
 	LDC -1
 	LDC -1
@@ -7,6 +7,82 @@ main:
 	LDF step
 	CONS
 	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
+
+find_ghost_func:
+	LD 0 0
+	ATOM
+	TSEL find_ghost_not_found find_ghost_main_loop
+
+find_ghost_main_loop:
+	LD 0 0
+	CAR
+	CDR
+	CAR
+	CAR
+	LD 0 1
+	CAR
+	CEQ
+
+	LD 0 0
+	CAR
+	CDR
+	CAR
+	CDR
+	LD 0 1
+	CDR
+	CEQ
+
+	MUL
+
+	LD 0 0
+	CDR
+	ST 0 0
+
+	TSEL find_ghost_found find_ghost_func
+
+find_ghost_not_found:
+	LDC 1
+	RTN
+
+find_ghost_found:
+	LDC 0
+	RTN	
+
+;////////////////////////////////////////////////////////////////////////////////
+
+check_all_ghosts_func:
+	LD 0 1
+	ATOM
+	TSEL check_all_ghosts_ok check_all_ghosts_main_loop
+
+check_all_ghosts_main_loop:
+	LD 0 0
+	LD 0 1
+	CAR
+
+	LDF find_ghost_func
+	AP 2
+
+	LDC 1
+	CEQ
+
+	LD 0 1
+	CDR
+	ST 0 1
+
+	TSEL check_all_ghosts_func check_all_ghosts_fail
+
+check_all_ghosts_ok:
+	LDC 1
+	RTN
+
+check_all_ghosts_fail:
+	LDC 0
+	RTN
+
+;////////////////////////////////////////////////////////////////////////////////
 
 ;////////////////////////////////////////////////////////////////////////////////
 
@@ -358,6 +434,19 @@ check_finished_fail:
 ;////////////////////////////////////////////////////////////////////////////////
 
 bfs_func:
+	LD 2 1
+	CDR
+	CDR
+	CAR
+
+	LD 0 1
+
+	LDF check_all_ghosts_func
+	AP 2
+
+	TSEL bfs_continue4 bfs_return_max_dist
+
+bfs_continue4:
 	LD 0 0
 	LD 0 1
 	LDF check_finished_func
@@ -365,9 +454,9 @@ bfs_func:
 
 	LDC 1
 	CEQ
-	TSEL bfs_return_dist bfs_continue
+	TSEL bfs_return_dist bfs_continue1
 
-bfs_continue:
+bfs_continue1:
 	LD 0 2
 	LDC 20
 	CGT
