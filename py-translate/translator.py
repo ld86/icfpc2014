@@ -55,11 +55,17 @@ def disassemble(co):
         result.append((is_linestart, is_label, i, opcode.opname[op], oparg, optype, opval))
     return result
 
-def trans(module, co, vals, offset):
+def trans(my_name, module, co, vals, gbag):
     bag = {}
     bag["indent"] = 0
-    bag["last_st"] = offset + co.co_argcount - 1
+    bag["last_st"] = co.co_argcount - 1
+    bag["last_ld"] = None
+    bag["consts"] = []
     bag["funcs"] = []
+    bag["vars"] = {}
+
+    for i in xrange(co.co_argcount):
+        bag["vars"][co.co_varnames[i]] = i
 
     def compare(x):
         r = []
@@ -100,12 +106,9 @@ def trans(module, co, vals, offset):
         bag["indent"] += 1
         inv = (bag["inv"] != inv)
         del bag["inv"]
-#        if bag["inv"]:
-#            del bag["inv"]
         if inv:
             return [("SEL", lll(x[4]), lll(x[2])), (v,)]
         else:
-#            del bag["inv"]
             return [("SEL", lll(x[2]), lll(x[4])), (v,)]
 
     def ret(x):
@@ -127,14 +130,25 @@ def trans(module, co, vals, offset):
             r.append(("CDR",)) # CDR?
         return r
 
+    def pop_top(x):
+        stp = bag["last_st"] + 1
+        return [("ST", 0, stp)]
+
+    def ld(x):
+        r = []
+        bag["last_ld"] = x[4]
+        r.append(("LD", 0, x[4]))
+        return r
+
     def st(x):
         r = []
-        bag["last_st"] = offset + x[4]
+        bag["last_st"] = x[4]
+        bag["vars"][x[6]] = x[4]
         if "func" in bag:
             r.append(("LDF", bag["func"]))
             bag["funcs"].append((bag["func"], 0))
             del bag["func"]
-        r.append(("ST",0, offset + x[4]))
+        r.append(("ST", 0, x[4]))
         return r
 
     def load_global(x):
@@ -150,7 +164,23 @@ def trans(module, co, vals, offset):
             r.append(("ATOM",))
             return r
 
+        if f == "_parent_get":
+            fname, vname, depth = bag["consts"][-3:]
+            idx = gbag[(fname, my_name, vname)]
+            r += pop_top(None) * 3
+            r.append(("LD", depth + 1, idx))
+            return r
+
+        if f == "_parent_set":
+            fname, vname, depth = bag["consts"][-3:]
+            idx = gbag[(fname, my_name, vname)]
+            r.append(("ST", depth + 1, idx))
+            r += pop_top(None) * 2
+            return r
+
         if f:
+            for v, i in bag["vars"].iteritems():
+                gbag[(my_name, f, v)] = i
             inner = module.__dict__[f].__code__
             n = max(x[4], inner.co_argcount + inner.co_nlocals + 1)
             d = n - x[4]
@@ -164,6 +194,8 @@ def trans(module, co, vals, offset):
 
     def load_const(x):
         r = []
+#        bag["last_const"] = x[6]
+        bag["consts"].append(x[6])
         if isinstance(x[6], tuple):
             for v in x[6]:
                 r.append(("LDC", v))
@@ -193,13 +225,14 @@ def trans(module, co, vals, offset):
             "POP_JUMP_IF_TRUE": lambda x: jump(x, True),
             "JUMP_FORWARD": jump_forward, #we shouldn't use "else", command:JOIN
             "JUMP_ABSOLUTE": lambda x: [], #we shouldn't use "else", command:JOIN
-            "LOAD_FAST": lambda x: [("LD",0, offset + x[4])],
+            "LOAD_FAST": ld,
             "STORE_FAST": st, #lambda x: [("ST",0,x[4])],
             "RETURN_VALUE": ret,
             "BUILD_TUPLE": lambda x: [("CONS",) for i in xrange(x[4] - 1)],
             "UNPACK_SEQUENCE": unpack_sequence,
             "CALL_FUNCTION": call_function,
             "LOAD_GLOBAL": load_global,
+            "POP_TOP": pop_top,
     }
 
     for val in vals:
@@ -214,9 +247,12 @@ def trans(module, co, vals, offset):
 
     return bag["funcs"]
 
+
 module = imp.load_source("src", sys.argv[1])
 
+
 fs = [("result", 0)]
+gbag = {}
 
 done = set()
 
@@ -229,5 +265,6 @@ while fs:
     res = disassemble(co)
     print
     print "%s: ; func" % r
-    fs += trans(module, co, res, o)
+    fs += trans(r, module, co, res, gbag)
 
+#print >>sys.stderr, gbag
